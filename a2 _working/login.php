@@ -16,12 +16,7 @@
 	function login() {
 		
 		//Connect to the database
-		try {
-			$dbh = new PDO('sqlite:a2.sqlite');
-			echo "DB connection success<br>";
-		} catch(PDOException $e) {
-			echo $e->getMessage();
-		}
+		include("dbconnect.php");
 		
 		//Collect user provided information
 		$email = $_REQUEST['email'];
