@@ -24,7 +24,6 @@
 			echo "<input type='hidden' name='id' value='$row[id]' />";
 	
 		echo "<input type='submit' name='submit' value='Delete Artist' class='deleteButton'/>"
-		//."<input type='submit' name='submit' value='X' class='deleteButton'/>"
 		."</form>";
 	}
 	if ($_REQUEST['submit'] == "Delete Artist"){
