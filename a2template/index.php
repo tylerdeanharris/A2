@@ -26,6 +26,9 @@
                 </nav>
                 
             </header>
+            <div id="leftbox">
+           		<p>This is text</p>
+           	</div> 
           <section id="main-content">
         
                 <article>
@@ -53,9 +56,6 @@
                     </div>
                 </article>
             </section>
-            <div id="leftbox">
-           <p>This is text</p>
-           </div> 
             
             <aside>
                 <div class="side-box">
@@ -79,8 +79,8 @@
 							if (!$_SESSION['id']) {
 								echo "<table><form action='index.php' method='post'><tr>"
 								."<h1>Login</h1>"
-								."<td>Email:</td><td><input type='text' name='email' size='30'></td></tr>"
-								."<tr><td>Password:</td><td><input type='password' name='password' size='30'></td></tr>"
+								."<td>Email:</td><td><input type='text' name='email'></td></tr>"
+								."<tr><td>Password:</td><td><input type='password' name='password'></td></tr>"
 								."<tr><td><input type='submit' value='Login' name='login'></td></tr>"
 								."<tr><td><small>Not a member?<a href='register.php'>Signup now!</a></small></td></tr>"
 								."</form></table>";
