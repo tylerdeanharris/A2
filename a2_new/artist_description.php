@@ -1,11 +1,12 @@
 <?php
 	session_start();
+	include("dbconnect.php");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
+<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>Home</title>
+		<title><?php echo $_GET['artist_name'];?></title>
         <!-- <link rel="stylesheet" href="reset.css" type="text/css" /> -->
 		<link rel="stylesheet" href="style.css" type="text/css" />
 	</head>
@@ -13,7 +14,7 @@
     	<div id="main-wrapper">
             <header>
             
-                <h1 class="logo"><a href="index.php" title="Home">Hom2</a></h1>
+                <h1 class="logo"><a href="index.php" title="Home">Home</a></h1>
                 
                 <nav class="primary">
                     <ul>
@@ -26,33 +27,23 @@
                 </nav>
                 
             </header>
-            <div id="leftbox">
-           		<p>This is text</p>
-           	</div> 
-          <section id="main-content">
-        
+            <section id="main-content">
                 <article>
-                    <img class="thumbnail" src="#" alt="thumbnail" />
                     <div>
-                        <a href="#" title=""><h1>Heading</h1></a>
-                        <p>Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.</p>
-                        <a href="#" title="Read More">Read More</a>
-                    </div>
-                </article>
-                <article>
-                    <img class="thumbnail" src="#" alt="thumbnail" />
-                    <div>
-                        <a href="#" title=""><h1>Heading 2</h1></a>
-                        <p>Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.</p>
-                        <a href="#" title="Read More">Read More</a>
-                    </div>
-                </article>
-            
-                <article>
-                  <div>
-                    <a href="#" title=""><h1>Heading 3</h1></a>
-                        <p>Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.Stuff goes here.</p>
-                        <a href="#" title="Read More">Read More</a>
+                  		<?php
+						echo"<h1>". $_GET["artist_name"]. "</h1>";
+						$sql = "SELECT * FROM artistInput WHERE artist_id = $_GET[artist_id]";
+						foreach($dbh->query($sql) as $row){
+							echo'<section>';
+								echo "<ul class='list_format'>";
+									echo "<li><p><img width='20%' height='20%' src='" . $row['location'] . "'></p></li>";
+									echo '<p><strong> Artist Description: </strong>' . $row['artist_description'] . '</p>';
+									echo '<p><strong>Email address: </strong>' . $row['email'] . '</p>';
+								echo "</ul>";	
+							echo"</section>";
+						}
+						?>
+                        
                     </div>
                 </article>
             </section>
@@ -61,7 +52,7 @@
                 <div class="side-box">
                 	<?php
 						//Display the login form
-						function index() {
+						function displayLogin() {
 							
 							include("dbconnect.php");
 							
@@ -77,10 +68,10 @@
 								}
 							}	
 							if (!$_SESSION['id']) {
-								echo "<table><form action='index.php' method='post'><tr>"
+								echo "<table><form action='bulletin.php' method='post'><tr>"
 								."<h1>Login</h1>"
-								."<td>Email:</td><td><input type='text' name='email'></td></tr>"
-								."<tr><td>Password:</td><td><input type='password' name='password'></td></tr>"
+								."<td>Email:</td><td><input type='text' name='email' size='30'></td></tr>"
+								."<tr><td>Password:</td><td><input type='password' name='password' size='30'></td></tr>"
 								."<tr><td><input type='submit' value='Login' name='login'></td></tr>"
 								."<tr><td><small>Not a member?<a href='register.php'>Signup now!</a></small></td></tr>"
 								."</form></table>";
@@ -97,7 +88,7 @@
 						}
 						
 						//This function will log the user in
-						function login() {
+						function processLogin() {
 							
 							//Connect to the database
 							include("dbconnect.php");
@@ -138,22 +129,21 @@
 							$_SESSION["id"] = $row3['id'];
 							$_SESSION["membership_type"] = $row3['membership_type'];
 							
-							header("Location: index.php");
+							header("Location: bulletin.php");
 							$dbh->null;
 							}
 							}
 						}
 							
 						if (isset($_POST['login'])) {
-						   login();
+						   processLogin();
 						}
 					
-						index();
+						displayLogin();
 						
 					?>
                 </div>
             </aside>
-            
             
             <footer>
                 <small>&copy; <a href="index.php" title="Townsville Community Music Centre">Townsville Community Music Centre</a>. All rights reserved.</small>
