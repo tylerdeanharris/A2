@@ -1,0 +1,103 @@
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	font-family: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+}
+
+body {
+}
+
+#main-wrapper {
+	width: 100%;
+	margin: 0 auto;
+}
+
+header {
+	background: #6B6B6B;
+	padding: 1% 0 0 0;
+}
+
+.logo a {
+	width: 147px;
+	height: 98px;
+	text-indent: -9999%;
+	background: url(logo.png);
+	background-repeat: no-repeat;
+	display: block;
+	margin: 0 0 -1.5% 3%;
+}
+
+.primary ul {
+	background: #C8282A;
+	font-family: Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.primary ul li {
+	padding: 1% 1% 1% 1%;
+	display: inline-block;
+}
+
+.primary ul li a, a:link {
+	text-decoration: none;
+	color: #FFFFFF;
+}
+
+.primary ul li a:hover {
+	color: #E7590B;
+	font-weight: bold;
+}
+
+#main-content {
+	background: #E5E5E5;
+	margin-left: 18%;
+	width: 60%;
+	padding: 1% 1% 1% 1%;
+	color: #000000;
+	margin-bottom: 2%;
+	float: left;
+	border-radius: 5%;
+}
+
+#leftbox {
+	width: 16%;
+	padding: 1% 3% 3% 3%;
+	background: #E5E5E5;
+	position: absolute;
+	border-radius: 5%;
+	font-family: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+	
+}
+
+aside {
+	width: 20%;
+	background: #E5E5E5;
+	float: right;
+	border-radius: 5%;
+}
+
+.side-box {
+	padding: 0% 3% 3% 3%;
+	border-radius: 5%;
+	font-family: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+}
+
+.loginError {
+	color: #F00000;
+}
+
+footer {
+	clear: both;
+	background: #333333;
+	padding: 1% 1% 1% 1%;
+	color: #FFFFFF;
+}
+
+footer a, a:link {
+	text-decoration: none;
+	color: #FFFFFF;
+}
+footer a:hover {
+	font-weight: bold;
+	color: #E7590B;
+}
