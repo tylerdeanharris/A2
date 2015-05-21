@@ -13,7 +13,7 @@
     	<div id="main-wrapper">
             <header>
             
-                <h1 class="logo"><a href="index.php" title="Home">Home</a></h1>
+                <h1 class="logo"><a href="index.php" title="Home">Hom2</a></h1>
                 
                 <nav class="primary">
                     <ul>
