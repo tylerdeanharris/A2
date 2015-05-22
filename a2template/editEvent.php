@@ -2,51 +2,53 @@
 	session_start();
 	include("dbconnect.php");
 	if (!$_SESSION['id']) {
-		header("Location: bulletin.php");
+		header("Location: events.php");
 	}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<?php include("inc/header.php"); ?>
-    <title>Add Bulletin Post - Townsville Community Music Centre</title>
+    <title>Edit Event - Townsville Community Music Centre</title>
 	<body>
     	<div id="main-wrapper">
             <?php include("inc/navigation.php"); ?>
             <section id="main-content">
                 <article>
                     <div>
-                        <?php
+                    	<?php
 						
 							function displayForm() {
 								include("dbconnect.php");
 								if (isset($_REQUEST['error'])) {
 									if ($_REQUEST['error'] == 'noTitle') {
-										echo "<p class='loginError'>Please enter a post title.</p>";
-									} else if ($_REQUEST['error'] == 'noContent') {
-										echo "<p class='loginError'>Please enter some content for the post.</p>";
-									} else if ($_REQUEST['error'] == 'noContact') {
-										echo "<p class='loginError'>Please provide some contact details.</p>";
+										echo "<p class='loginError'>Please enter the name of the event.</p>";
+									} else if ($_REQUEST['error'] == 'noInformation') {
+										echo "<p class='loginError'>Please enter some content for the event.</p>";
+									} else if ($_REQUEST['error'] == 'noLocation') {
+										echo "<p class='loginError'>Please provide the event location.</p>";
 									}
 								}
+								$query = $dbh->query("SELECT * FROM events WHERE id=" . $_REQUEST['id'] . "");
+								$result = $query->fetch(PDO::FETCH_ASSOC);
 								?>
                                     <table>
-                                        <form method="post" action="addBulletin.php">
+                                        <form method="post" action="editEvent.php?id=<?php echo $_REQUEST['id']; ?>">
                                             <tr>
-                                                <h1>New Bulletin Post</h1>
+                                                <h1>Edit an Event</h1>
                                                 <td>Title:</td>
-                                                <td><input type="text" name="title" size="43" autofocus="autofocus" /></td>
+                                                <td><input type="text" name="title" size="43" value="<?php echo $result['title']; ?>" /></td>
                                             </tr>
                                             <tr>
-                                                <td>Body Content:</td>
-                                                <td><textarea name="body" rows="10" cols="40"></textarea></td>
+                                                <td>Information:</td>
+                                                <td><textarea name="information" rows="10" cols="40"><?php echo $result['information']; ?></textarea></td>
                                             </tr>
                                             <tr>
-                                                <td>Contact Information:</td>
-                                                <td><input name="contact" size="43"/></td>
+                                                <td>Location:</td>
+                                                <td><input name="location" size="43" value="<?php echo $result['location']; ?>" /></td>
                                             </tr>
                                             <tr>
                                                 <td></td>
-                                                <td><input type="submit" value="Create Post" name="addBulletin" /></td>
+                                                <td><input type="submit" value="Save Event" name="editEvent" /></td>
                                             </tr>
                                         </form>
                                     </table>
@@ -58,37 +60,34 @@
 								include("dbconnect.php");
 								
 								if(empty($_POST['title'])) {
-									header("Location: addBulletin.php?error=noTitle");
+									header("Location: editEvent.php?error=noTitle");
 									exit();
 								}
-								if(empty($_POST['body'])) {
-									header("Location: addBulletin.php?error=noContent");
+								if(empty($_POST['information'])) {
+									header("Location: editEvent.php?error=noInformation");
 									exit();
 								}
-								if(empty($_POST['contact'])) {
-									header("Location: addBulletin.php?error=noContact");
+								if(empty($_POST['location'])) {
+									header("Location: editEvent.php?error=noLocation");
 									exit();
 								}
 								
 								$title = $_POST['title'];
-								$body = $_POST['body'];
-								$date_created = date("d.m.y");
-								$expire = new DateTime($date_created);
-								$expire->modify('+30 day');
-								$expire = $expire->format('d.m.Y');
-								$contact_preference = $_POST['contact'];
+								$information = $_POST['information'];
+								$location = $_POST['location'];
 								
-								//If everything above has passed, create the post
-								$insertPost = "INSERT INTO bulletin_board (title,body,date_created,date_expires,created_by,contact_preference) VALUES ('$title','$body','$date_created','$expire','$_SESSION[id]','$contact_preference')";
-								if ($dbh->exec($insertPost)) {
-									header("Location: bulletin.php");
+								//If everything above has passed, update any changes
+								$editEvent = "UPDATE events SET title = '$title', information = '$information', location = '$location' WHERE id='$_REQUEST[id]'";
+								if ($dbh->exec($editEvent)) {
+									echo 'Updated successfully...';
+									echo '<br /><a href="events.php">Back to Events</a>';
 								} else {
 									echo "Sorry, but it appears something went wrong...";
 								}
 								
 							}
 							
-							if (isset($_POST['addBulletin'])) {
+							if (isset($_POST['editEvent'])) {
 							   processForm();
 							}
 						

@@ -8,14 +8,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<?php include("inc/header.php"); ?>
-    <title>Add Bulletin Post - Townsville Community Music Centre</title>
+    <title>Edit Bulletin Post - Townsville Community Music Centre</title>
 	<body>
     	<div id="main-wrapper">
             <?php include("inc/navigation.php"); ?>
             <section id="main-content">
                 <article>
                     <div>
-                        <?php
+                    	<?php
 						
 							function displayForm() {
 								include("dbconnect.php");
@@ -28,25 +28,27 @@
 										echo "<p class='loginError'>Please provide some contact details.</p>";
 									}
 								}
+								$query = $dbh->query("SELECT * FROM bulletin_board WHERE id=" . $_REQUEST['id'] . "");
+								$result = $query->fetch(PDO::FETCH_ASSOC);
 								?>
                                     <table>
-                                        <form method="post" action="addBulletin.php">
+                                        <form method="post" action="editBulletin.php?id=<?php echo $_REQUEST['id']; ?>">
                                             <tr>
-                                                <h1>New Bulletin Post</h1>
+                                                <h1>Edit Bulletin Post</h1>
                                                 <td>Title:</td>
-                                                <td><input type="text" name="title" size="43" autofocus="autofocus" /></td>
+                                                <td><input type="text" name="title" size="43" value="<?php echo $result['title']; ?>" /></td>
                                             </tr>
                                             <tr>
                                                 <td>Body Content:</td>
-                                                <td><textarea name="body" rows="10" cols="40"></textarea></td>
+                                                <td><textarea name="body" rows="10" cols="40"><?php echo $result['body']; ?></textarea></td>
                                             </tr>
                                             <tr>
                                                 <td>Contact Information:</td>
-                                                <td><input name="contact" size="43"/></td>
+                                                <td><input name="contact" size="43" value="<?php echo $result['contact_preference']; ?>" /></td>
                                             </tr>
                                             <tr>
                                                 <td></td>
-                                                <td><input type="submit" value="Create Post" name="addBulletin" /></td>
+                                                <td><input type="submit" value="Save Post" name="editBulletin" /></td>
                                             </tr>
                                         </form>
                                     </table>
@@ -58,37 +60,34 @@
 								include("dbconnect.php");
 								
 								if(empty($_POST['title'])) {
-									header("Location: addBulletin.php?error=noTitle");
+									header("Location: editBulletin.php?error=noTitle");
 									exit();
 								}
 								if(empty($_POST['body'])) {
-									header("Location: addBulletin.php?error=noContent");
+									header("Location: editBulletin.php?error=noContent");
 									exit();
 								}
 								if(empty($_POST['contact'])) {
-									header("Location: addBulletin.php?error=noContact");
+									header("Location: editBulletin.php?error=noContact");
 									exit();
 								}
 								
 								$title = $_POST['title'];
 								$body = $_POST['body'];
-								$date_created = date("d.m.y");
-								$expire = new DateTime($date_created);
-								$expire->modify('+30 day');
-								$expire = $expire->format('d.m.Y');
 								$contact_preference = $_POST['contact'];
 								
-								//If everything above has passed, create the post
-								$insertPost = "INSERT INTO bulletin_board (title,body,date_created,date_expires,created_by,contact_preference) VALUES ('$title','$body','$date_created','$expire','$_SESSION[id]','$contact_preference')";
-								if ($dbh->exec($insertPost)) {
-									header("Location: bulletin.php");
+								//If everything above has passed, update any changes
+								$editPost = "UPDATE bulletin_board SET title = '$title', body = '$body', contact_preference = '$contact_preference' WHERE id='$_REQUEST[id]'";
+								if ($dbh->exec($editPost)) {
+									echo 'Updated successfully...';
+									echo '<br /><a href="bulletin.php">Back to Bulletin Board</a>';
 								} else {
 									echo "Sorry, but it appears something went wrong...";
 								}
 								
 							}
 							
-							if (isset($_POST['addBulletin'])) {
+							if (isset($_POST['editBulletin'])) {
 							   processForm();
 							}
 						

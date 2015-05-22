@@ -2,33 +2,19 @@
 	session_start();
 	include("dbconnect.php");
 	$debugOn = true;  
-
+	if (!isset($_SESSION['id'])) {
+		header("Location: artist_list.php");
+	} else if ($_SESSION['membership_type'] != 1) {
+		header("Location: artist_list.php");
+	}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>Home</title>
-        <!-- <link rel="stylesheet" href="reset.css" type="text/css" /> -->
-		<link rel="stylesheet" href="style.css" type="text/css" />
-	</head>
+	<?php include("inc/header.php"); ?>
+	<title>Update Artist - Townsville Community Music Centre</title>
 	<body>
     	<div id="main-wrapper">
-            <header>
-            
-                <h1 class="logo"><a href="index.php" title="Home">Home</a></h1>
-                
-                <nav class="primary">
-                    <ul>
-                        <li><a href="index.php">Home</a></li>
-                        <li><a href="bulletin.php">Bulletin</a></li>
-                        <li><a href="#">Link 3</a></li>
-                        <li><a href="#">Link 4</a></li>
-                        <li><a href="#">Link 5</a></li>
-                    </ul>
-                </nav>
-                
-            </header>
+            <?php include("inc/navigation.php"); ?>
             <section id="main-content">
                 <article>
                     <div>
@@ -99,7 +85,7 @@
 						if (isset ($name)) {
 						if (!empty($name)) {
 	
-						$location =    dirname(__FILE__). '/photos/';
+						$location =    dirname(__FILE__). '/artistPhotos/';
 						if  (move_uploaded_file($tmp_name, $location.$name)){
 						echo 'Uploaded';
 						}
@@ -119,7 +105,7 @@
 										
 									} else {
 											
-									$sql = "UPDATE artistInput SET artist_name = '$_REQUEST[artist_name]', artist_description = '$_REQUEST[artist_description]', email = '$_REQUEST[email]',  music_genre = '$_REQUEST[music_genre]', location='photos/$name' WHERE artist_id=$_POST[artist_id]";
+									$sql = "UPDATE artistInput SET artist_name = '$_REQUEST[artist_name]', artist_description = '$_REQUEST[artist_description]', email = '$_REQUEST[email]',  music_genre = '$_REQUEST[music_genre]', location='artistPhotos/$name' WHERE artist_id=$_POST[artist_id]";
 										if ($dbh->exec($sql)){
 											echo "$_REQUEST[artist_name] has been updated.";
 											//refresh page if when submit button has been selected.
@@ -229,10 +215,7 @@
 					?>
                 </div>
             </aside>
-            
-            <footer>
-                <small>&copy; <a href="index.php" title="Townsville Community Music Centre">Townsville Community Music Centre</a>. All rights reserved.</small>
-            </footer>
+            <?php include("inc/footer.php"); ?>
         </div>
 	</body>
 </html>

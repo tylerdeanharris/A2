@@ -1,70 +1,31 @@
 <?php
 	session_start();
 	include("dbconnect.php");
-	if ($_REQUEST['submit'] == "X"){
-		$sql = "DELETE FROM artistInput WHERE id = '$_REQUEST[id]'";
-	if ($dbh->exec($sql))
-		header("Location: artist.php"); // NOTE: This must be done before ANY html is output, which is why it's right at the top!
-	}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<title>Home</title>
-        <!-- <link rel="stylesheet" href="reset.css" type="text/css" /> -->
-		<link rel="stylesheet" href="style.css" type="text/css" />
-	</head>
+	<?php include("inc/header.php"); ?>
+	<title><?php echo $_GET['artist_name'];?></title>
 	<body>
     	<div id="main-wrapper">
-            <header>
-            
-                <h1 class="logo"><a href="index.php" title="Home">Home</a></h1>
-                
-                <nav class="primary">
-                    <ul>
-                        <li><a href="index.php">Home</a></li>
-                        <li><a href="bulletin.php">Bulletin</a></li>
-                        <li><a href="#">Link 3</a></li>
-                        <li><a href="#">Link 4</a></li>
-                        <li><a href="#">Link 5</a></li>
-                    </ul>
-                </nav>
-                
-            </header>
+            <?php include("inc/navigation.php"); ?>
             <section id="main-content">
                 <article>
                     <div>
-                    <?php                        
-                    // Display what's in the database at the moment.
-                    $sql = "SELECT * FROM artistInput";
-                    
-                    foreach ($dbh->query($sql) as $row){
-                        echo "<form id='deleteForm' name='deleteForm' method='post' action='delete_form.php'/>"
-                        ."<label>Artist Name:</label>";
-                            echo "<input type='text' name='artist_name' value='$row[artist_name]' />"
-                        ."<label>Artist Description:</label>";
-                            echo "<input type='text' name='artist_description' value='$row[artist_description]' />"
-                        ."<label>Email:</label>";
-                            echo "<input type='text' name='email' value='$row[email]' />"
-                        ."<label>Genre:</label>";
-                            echo "<input type = 'text' name music_genre  value='$row[music_genre]' />";	
-                            echo "<label>Image:</label>"
-                        .'<p><img width="300px" height="300px" src="'.$row['location'].'"></p>';
-                            echo "<input type='hidden' name='artist_id' value='$row[artist_id]' />";
-                    
-                        echo "<input type='submit' name='submit' value='Delete Artist' class='deleteButton'/>"
-                        ."</form>";
-                    }
-                    if ($_REQUEST['submit'] == "Delete Artist"){
-                        $sql = "DELETE FROM artistInput WHERE artist_id = '$_REQUEST[artist_id]'";
-                        if ($dbh->exec($sql))
-                            echo "<p>Query: " . $sql . "</p>\n<p><strong>"
-                            ."<p><a href='artist.php'>Click to add new artist</a></p>"
-                            ."<p><a href='update_form.php'>Click to update an artist</a>";
-                            header("Location: delete_form.php");
-                    }
-                	?>	
+                  		<?php
+						echo"<h1>". $_GET["artist_name"]. "</h1>";
+						$sql = "SELECT * FROM artistInput WHERE artist_id = $_GET[artist_id]";
+						foreach($dbh->query($sql) as $row){
+							echo'<section>';
+								echo "<ul class='list_format'>";
+									echo "<li><p><img width='20%' height='20%' src='" . $row['location'] . "'></p></li>";
+									echo '<p><strong> Artist Description: </strong>' . $row['artist_description'] . '</p>';
+									echo '<p><strong>Email address: </strong>' . $row['email'] . '</p>';
+								echo "</ul>";	
+							echo"</section>";
+						}
+						?>
+                        
                     </div>
                 </article>
             </section>
@@ -165,10 +126,7 @@
 					?>
                 </div>
             </aside>
-            
-            <footer>
-                <small>&copy; <a href="index.php" title="Townsville Community Music Centre">Townsville Community Music Centre</a>. All rights reserved.</small>
-            </footer>
+            <?php include("inc/footer.php"); ?>
         </div>
 	</body>
 </html>
