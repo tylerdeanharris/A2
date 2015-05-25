@@ -1,0 +1,172 @@
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	font-family: "Times New Roman", Times, serif;
+}
+
+body {
+}
+.heading{
+	margin: -5% 0 3% 40%;
+	ffont-family: "Times New Roman", Times, serif;
+	font-style:oblique;
+	font-size:400%;
+	color:#F9F9F9;	
+}
+
+#main-wrapper {
+	width: 100%;
+	margin: 0 auto;
+}
+
+header {
+	background:#727272;
+	border-color:#CA282D;
+	border-radius:10px;
+	padding: 1% 0 0 0;
+	
+}
+
+.logo a {
+	width: 147px;
+	height: 98px;
+	text-indent: -9999%;
+	background: url(logo.png);
+	background-repeat: no-repeat;
+	display: block;
+	margin-left:3%;
+}
+
+
+.primary ul {
+	background: #C8282A;
+	ffont-family: "Times New Roman", Times, serif;
+	width:100%;
+	margin-top:0%;
+	border-style:solid;
+	border-color:#4F4F4F;
+	border-radius:10px;
+	text-align:center;
+
+	
+}
+
+.primary ul li {
+	padding: 1% 1% 1% 1%;
+	display: inline-block;
+	
+}
+
+.primary ul li a, a:link {
+	text-decoration: none;
+	color: #FFFFFF;
+	
+}
+
+.primary ul li a:hover {
+	color: #E7590B;
+	font-weight: bold;
+}
+
+#main-content {
+	
+	margin-left:;
+	width: 79%;
+	padding: 1% 1% 1% 1%;
+	color: #000000;
+	margin-bottom: 2%;
+	float: left;
+	border-style:solid;
+	border-color:#4F4F4F;
+	border-radius:10px;
+}
+.thumbnail {
+	border-image: url(CivicFront500.jpg), url(old-music.jpg);
+	border: 5px solid transparent;
+	border-color:#807777;
+	}
+
+aside {
+	width: 20%;
+	
+	float: right;
+	border-style:solid;
+	border-color:#4F4F4F;
+	border-radius:10px;
+}
+
+.side-box {
+	padding: 0% 3% 3% 3%;
+	border-radius: 5%;
+	font-family: "Times New Roman", Times, serif;
+	
+}
+
+.loginError {
+	color: #F00000;
+}
+
+footer {
+	clear: both;
+	background: #333333;
+	padding: 1% 1% 1% 1%;
+	color: #FFFFFF;
+}
+
+footer a, a:link {
+	text-decoration: none;
+	color: #FFFFFF;
+}
+footer a:hover {
+	font-weight: bold;
+	color: #E7590B;
+}
+
+article{ 
+	margin-left:20%;
+}
+
+.sidebox_sponsor{
+	width: 20%;
+	
+	float: right;
+	border-style:solid;
+	border-color:#4F4F4F;
+	border-radius:10px;
+	margin-top:1%;
+	padding: 0% 3% 3% 3%;
+	font-family: Baskerville, "Palatino Linotype", Palatino, "Century Schoolbook L", "Times New Roman", serif;
+}
+
+.genre{
+	border-style:solid;
+	border-color:#4F4F4F;
+	border-radius:10px;
+	
+	
+}
+
+article2{
+	width:15%;
+	float:left;
+	border-right:thick solid;
+	
+	border-color:#4F4F4F;
+	
+}
+
+#sponsortitle {
+	text-align:center;
+}
+
+#sponosr1 {
+	margin-left:0%;
+	
+}
+
+
+#sponosr2{
+	margin-left:2%;	
+}
+
