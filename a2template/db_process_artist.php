@@ -7,7 +7,6 @@
 	} else if ($_SESSION['membership_type'] != 1) {
 		header("Location: artist_list.php");
 	}
-	$_SESSION['id'] = $created_by_id
 ?>
 <!doctype html>
 <html>
@@ -74,7 +73,7 @@
 							
 						$location="artistPhotos/" . $_FILES["image"]["name"];
 						
-						$sql = "INSERT INTO artistInput (artist_name, artist_description, email, music_genre, location, created_by) VALUES ('$_REQUEST[artist_name]', '$_REQUEST[artist_description]','$_REQUEST[email]','$_REQUEST[music_genre]', '$location', '$created_by_id')";
+						$sql = "INSERT INTO artistInput (artist_name, artist_description, email, music_genre, location, created_by) VALUES ('$_REQUEST[artist_name]', '$_REQUEST[artist_description]','$_REQUEST[email]','$_REQUEST[music_genre]', '$location', '$_SESSION[id]')";
 					
 							if ($dbh->exec($sql)){
 								//echo "<strong>Inserted $_REQUEST[artist_name]</strong>";
@@ -88,7 +87,7 @@
 			//if no imgae has been inserted, assign the artist a default image.		
 			}else{
 				if(empty($_FILES['image']['name']))	{
-					$sql = "INSERT INTO artistInput (artist_name, artist_description, email, music_genre, location, created_by) VALUES ('$_REQUEST[artist_name]', '$_REQUEST[artist_description]','$_REQUEST[email]','$_REQUEST[music_genre]', 'artistPhotos/defult.jpg', '$created_by_id')";
+					$sql = "INSERT INTO artistInput (artist_name, artist_description, email, music_genre, location, created_by) VALUES ('$_REQUEST[artist_name]', '$_REQUEST[artist_description]','$_REQUEST[email]','$_REQUEST[music_genre]', 'artistPhotos/default.jpg', '$_SESSION[id]')";
 					
 						if ($dbh->exec($sql)){
 							//echo "<strong>Inserted $_REQUEST[artist_name]</strong>";
@@ -103,10 +102,6 @@
 				}
 			}
 		}
-        $dbh = null;
-    ?>
-    <p><a href="artist.php">Return to Artist sign up page</a></p>
-    <p><a href="delete_form.php">Go to delete Artist</a></p>
-    <p><a href="update_form.php">Go to Update Artist data</a></p> 
+	?>
 </body>
 </html>

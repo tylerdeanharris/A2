@@ -18,7 +18,7 @@
 						foreach($dbh->query($sql) as $row){
 							echo'<section>';
 								echo "<ul class='list_format'>";
-									echo "<li><p><img width='20%' height='20%' src='" . $row['location'] . "'></p></li>";
+									echo "<li><p><img width='550px' height='500px' src='" . $row['location'] . "'></p></li>";
 									echo '<p><strong> Artist Description: </strong>' . $row['artist_description'] . '</p>';
 									echo '<p><strong>Email address: </strong>' . $row['email'] . '</p>';
 								echo "</ul>";	
@@ -50,10 +50,10 @@
 								}
 							}	
 							if (!$_SESSION['id']) {
-								echo "<table><form action='bulletin.php' method='post'><tr>"
+								echo "<table><form action='artist_description.php' method='post'><tr>"
 								."<h1>Login</h1>"
-								."<td>Email:</td><td><input type='text' name='email' size='30'></td></tr>"
-								."<tr><td>Password:</td><td><input type='password' name='password' size='30'></td></tr>"
+								."<td>Email:</td><td><input type='text' name='email'></td></tr>"
+								."<tr><td>Password:</td><td><input type='password' name='password'></td></tr>"
 								."<tr><td><input type='submit' value='Login' name='login'></td></tr>"
 								."<tr><td><small>Not a member?<a href='register.php'>Signup now!</a></small></td></tr>"
 								."</form></table>";
@@ -80,7 +80,7 @@
 							$password = md5($_REQUEST['password']);
 							
 							if (empty($email)) {
-								header("Location: index.php?error=noEmail");
+								header("Location: artist_description.php?error=noEmail");
 								exit;
 							}
 							
@@ -91,7 +91,7 @@
 							$dbEmail = $row['email'];
 							   
 							if ($email != $dbEmail) {
-								header("Location: index.php?error=invalidEmail");
+								header("Location: artist_description.php?error=invalidEmail");
 							} else {
 								
 							$passwordQuery = "SELECT password FROM users WHERE email='$email'";
@@ -100,7 +100,7 @@
 							$dbPassword = $row2['password'];
 							
 							if ($password != $dbPassword) {
-								header("Location: index.php?error=invalidPassword");
+								header("Location: artist_description.php?error=invalidPassword");
 							} else {
 							
 							//Quickly collect all other user data for use during their session
@@ -111,7 +111,7 @@
 							$_SESSION["id"] = $row3['id'];
 							$_SESSION["membership_type"] = $row3['membership_type'];
 							
-							header("Location: bulletin.php");
+							header("Location: artist_description.php");
 							$dbh->null;
 							}
 							}

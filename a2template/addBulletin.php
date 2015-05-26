@@ -30,7 +30,7 @@
 								}
 								?>
                                     <table>
-                                        <form method="post" action="addBulletin.php">
+                                        <form method="post" action="addBulletin.php" enctype="multipart/form-data">
                                             <tr>
                                                 <h1>New Bulletin Post</h1>
                                                 <td>Title:</td>
@@ -39,6 +39,10 @@
                                             <tr>
                                                 <td>Body Content:</td>
                                                 <td><textarea name="body" rows="10" cols="40"></textarea></td>
+                                            </tr>
+                                            <tr>
+                                            	<td>Select Image:</td>
+                            					<td><input type="file" name="image" id="image" /></td>
                                             </tr>
                                             <tr>
                                                 <td>Contact Information:</td>
@@ -78,14 +82,52 @@
 								$expire = $expire->format('d.m.Y');
 								$contact_preference = $_POST['contact'];
 								
-								//If everything above has passed, create the post
-								$insertPost = "INSERT INTO bulletin_board (title,body,date_created,date_expires,created_by,contact_preference) VALUES ('$title','$body','$date_created','$expire','$_SESSION[id]','$contact_preference')";
-								if ($dbh->exec($insertPost)) {
-									header("Location: bulletin.php");
+								//Only allow certain Images to be uploaded
+								if ((($_FILES["image"]["type"] == "image/gif")
+								|| ($_FILES["image"]["type"] == "image/jpeg")
+								|| ($_FILES["image"]["type"] == "image/png")
+								|| ($_FILES["image"]["type"] == "image/pjpeg"))
+								&& ($_FILES["image"]["size"] < 2000000)) {
+									
+									// check for any error code in the data.
+									if ($_FILES["image"]["error"] > 0) {
+										echo "Error Code: " . $_FILES["image"]["error"] . "<br />";
+										echo "<p><a href='addBulletin.php'>Return to add bulletin page</a></p>:";
+									} else {	
+										//store img on server .
+										$file = $_FILES['image']['tmp_name'];
+										//Checking if photo has alread been stored. 
+										if (file_exists("bulletinPhotos/" . $_FILES["image"]["name"])){
+											echo $_FILES["image"]["name"] . " already exists. \n";
+										} else {						
+											$image = addslashes(file_get_contents($_FILES['image']['tmp_name']));
+											$image_name = addslashes($_FILES['image']['name']);						
+											move_uploaded_file($_FILES["image"]["tmp_name"],"bulletinPhotos/" . $_FILES["image"]["name"]);
+											$location="bulletinPhotos/" . $_FILES["image"]["name"];
+											$sql = "INSERT INTO bulletin_board (title, body, date_created, date_expires, created_by, contact_preference, location) VALUES ('$title', '$body','$date_created','$expire','$_SESSION[id]','$contact_preference','$location')";
+												if ($dbh->exec($sql)) {
+													//echo "<strong>Inserted $_REQUEST[artist_name]</strong>";
+													header("Location: bulletin.php");
+												} else {
+														echo "Not inserted"; // in case it didn't work - e.g. if database is not writeable 
+												}
+											}
+										} 
+								//if no imgae has been inserted, assign the artist a default image.		
 								} else {
-									echo "Sorry, but it appears something went wrong...";
+									if(empty($_FILES['image']['name']))	{
+										$sql = "INSERT INTO bulletin_board (title, body, date_created, date_expires, created_by, contact_preference, location) VALUES ('$title', '$body','date_created','$expire','$_SESSION[id]','$contact_preference','bulletinPhotos/default.jpg')";
+											if ($dbh->exec($sql)){
+												//echo "<strong>Inserted $_REQUEST[artist_name]</strong>";
+												header("Location: bulletin.php");
+											} else {
+												echo "Not inserted"; // in case it didn't work - e.g. if database is not writeable 
+											}
+									//display error message if invalid image has been submitted	
+									} else {
+										echo "You have entered an invalid Image type. Please enter the following imgae formats: gif, jpeg, png, pjpeg";
+									}
 								}
-								
 							}
 							
 							if (isset($_POST['addBulletin'])) {

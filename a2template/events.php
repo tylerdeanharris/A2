@@ -13,10 +13,10 @@
                 <article>
                     <div>
                         <?php
-							if(isset($_SESSION['id'])) {
+							if($_SESSION['membership_type'] == 2) {
 								echo '<a href=addEvent.php>Add New Event</a>';
 							}
-							$sql = "SELECT * FROM events";
+							$sql = "SELECT * FROM events ORDER BY date_created DESC";
 							echo '<h2>Events</h2>';
 							echo '<h4>Upcoming Events</h4>';
 							echo '-----------------------------------------------------------------------------------------------------------------------';
@@ -24,8 +24,9 @@
 								$query = $dbh->query("SELECT first_name, last_name FROM users WHERE id='$row[created_by]'");
 								$result = $query->fetch(PDO::FETCH_ASSOC);
 								echo '<div><h1>' . $row["title"] . '	</h1></div>';
+								echo "<div><img width='250px' height='200px' src='" . $row['location'] . "'></div>";
 								echo '<p>' . $row['information'] . '</p>';
-								echo '<small>Location: ' . $row['location'] . '</small><br /><br />';
+								echo '<small>Venue: ' . $row['venue'] . '</small><br /><br />';
 								echo '<small>Posted on: ' . $row['date_created'] . ' by ' . $result['first_name'] . ' ' . $result['last_name'] . '</small><br />';
 								if($_SESSION['id'] == $row['created_by'] || $_SESSION['membership_type'] == 2) {
 									echo '<br /><br /><a href="editEvent.php?id=' . $row['id'] . '">Edit</a> | <a href="deleteEvent.php?id=' . $row['id'] . '">Delete</a><br />';
@@ -59,8 +60,8 @@
 							if (!$_SESSION['id']) {
 								echo "<table><form action='events.php' method='post'><tr>"
 								."<h1>Login</h1>"
-								."<td>Email:</td><td><input type='text' name='email' size='30'></td></tr>"
-								."<tr><td>Password:</td><td><input type='password' name='password' size='30'></td></tr>"
+								."<td>Email:</td><td><input type='text' name='email'></td></tr>"
+								."<tr><td>Password:</td><td><input type='password' name='password'></td></tr>"
 								."<tr><td><input type='submit' value='Login' name='login'></td></tr>"
 								."<tr><td><small>Not a member?<a href='register.php'>Signup now!</a></small></td></tr>"
 								."</form></table>";

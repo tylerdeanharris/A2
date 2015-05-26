@@ -32,7 +32,7 @@
 								$result = $query->fetch(PDO::FETCH_ASSOC);
 								?>
                                     <table>
-                                        <form method="post" action="editBulletin.php?id=<?php echo $_REQUEST['id']; ?>">
+                                        <form method="post" action="editBulletin.php?id=<?php echo $_REQUEST['id']; ?>" enctype="multipart/form-data">
                                             <tr>
                                                 <h1>Edit Bulletin Post</h1>
                                                 <td>Title:</td>
@@ -41,6 +41,10 @@
                                             <tr>
                                                 <td>Body Content:</td>
                                                 <td><textarea name="body" rows="10" cols="40"><?php echo $result['body']; ?></textarea></td>
+                                            </tr>
+                                            <tr>
+                                            	<td>Select Image:</td>
+                            					<td><input type="file" name="image" id="image" /></td>
                                             </tr>
                                             <tr>
                                                 <td>Contact Information:</td>
@@ -76,14 +80,40 @@
 								$body = $_POST['body'];
 								$contact_preference = $_POST['contact'];
 								
-								//If everything above has passed, update any changes
-								$editPost = "UPDATE bulletin_board SET title = '$title', body = '$body', contact_preference = '$contact_preference' WHERE id='$_REQUEST[id]'";
-								if ($dbh->exec($editPost)) {
-									echo 'Updated successfully...';
-									echo '<br /><a href="bulletin.php">Back to Bulletin Board</a>';
-								} else {
-									echo "Sorry, but it appears something went wrong...";
+								$name = $_FILES["image"]["name"];
+								$tmp_name = $_FILES['image']['tmp_name'];
+								$error = $_FILES['image']['error'];
+			
+								if (isset ($name)) {
+								if (!empty($name)) {
+			
+								$location = dirname(__FILE__). '/bulletinPhotos/';
+								if  (move_uploaded_file($tmp_name, $location.$name)){
+									echo 'Congrats, image uploaded';
 								}
+			
+								} else {
+									echo 'Error';
+								}
+									}
+									
+										if(empty($name)){
+											$sql = "UPDATE bulletin_board SET title = '$title', body = '$body', contact_preference = '$contact_preference' WHERE id='$_REQUEST[id]'";
+												if ($dbh->exec($sql)){
+													echo "Updated.";
+													//refresh page if when submit button has been selected.
+													header("Location: bulletin.php");
+												}
+												
+											} else {
+													
+											$sql = "UPDATE bulletin_board SET title = '$title', body = '$body', contact_preference = '$contact_preference', location='bulletinPhotos/$name' WHERE id='$_REQUEST[id]'";
+												if ($dbh->exec($sql)){
+													echo "Updated.";
+													//refresh page if when submit button has been selected.
+													header("Location: bulletin.php");
+												}
+											}
 								
 							}
 							

@@ -2,28 +2,40 @@
 	session_start();
 	include("dbconnect.php");
 ?>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 	<?php include("inc/header.php"); ?>
     <title>Artists - Townsville Community Music Centre</title>
 	<body>
     	<div id="main-wrapper">
-            <?php include("inc/navigation.php"); ?>
-            <div id="leftbox">
-           		<h2>Genre</h2>
-    			<form action="artist_list.php" method="POST">
-                    <ul>
-                        <?php
-                            $sql = "SELECT DISTINCT music_genre FROM artistInput";
-                            foreach($dbh->query($sql) as $row) {
-                                echo'<li style="list-style:none">&raquo; <input type="checkbox" name="music_genre[]" value = "', $row['music_genre'], '"> ', $row['music_genre'], '</li>';
-                            }
-                        ?>
-                        <input type="submit" name="formSubmit" value="Submit" />
-                    </ul>
-    			</form>
-           	</div> 
+            <?php include("inc/navigation.php"); ?> 
           <section id="main-content">
+          	<h1>Featured Artist</h1>
+            <?php
+				$test = $dbh->query("SELECT MAX(artist_id) AS max_id, MIN(artist_id) AS min_id FROM artistInput");
+				$result = $test->fetch(PDO::FETCH_ASSOC);
+				a:
+				$random = mt_rand($result['min_id'], $result['max_id']);
+				$featured = $dbh->query("SELECT * FROM artistInput WHERE artist_id >= $random LIMIT 0,1");
+				$featuredResult = $featured->fetch(PDO::FETCH_ASSOC);
+				if ($featuredResult['artist_id'] != $random) {
+					goto a;
+				} else {
+					echo '<div>';
+					$image_url = $featuredResult['location'];
+					$null = "SELECT location FROM artistInput WHERE location = '".$featuredResult['location']."' ";
+					$result = $dbh->query($null);
+					if($result) {
+						echo "<img width='300px' height='200px' src='".$image_url."'>";
+					} else{ 
+						echo "<img src='Artist_images/default-avatar.jpg'>";
+					}
+					echo '<a href="artist_description.php?artist_id=', $featuredResult['artist_id'], '&artist_name=', $featuredResult['artist_name'], '"><h2>', $featuredResult['artist_name'], '</h2></a>';
+					echo '<p>', $featuredResult['artist_description'], '</p>';
+					echo '<p>', $featuredResult['genre'], '</p>';
+					echo '<p>', $featuredResult['email'], '</p>';
+					echo '</div>';
+				}
+			?>
           	<h2>Artists</h2>
 			<?php
 			
@@ -61,7 +73,6 @@
 			}
 		?>
             </section>
-            
             <aside>
                 <div class="side-box">
                 	<?php
@@ -82,7 +93,7 @@
 								}
 							}	
 							if (!$_SESSION['id']) {
-								echo "<table><form action='index.php' method='post'><tr>"
+								echo "<table><form action='artist_list.php' method='post'><tr>"
 								."<h1>Login</h1>"
 								."<td>Email:</td><td><input type='text' name='email'></td></tr>"
 								."<tr><td>Password:</td><td><input type='password' name='password'></td></tr>"
@@ -112,7 +123,7 @@
 							$password = md5($_REQUEST['password']);
 							
 							if (empty($email)) {
-								header("Location: index.php?error=noEmail");
+								header("Location: artist_list.php?error=noEmail");
 								exit;
 							}
 							
@@ -123,7 +134,7 @@
 							$dbEmail = $row['email'];
 							   
 							if ($email != $dbEmail) {
-								header("Location: index.php?error=invalidEmail");
+								header("Location: artist_list.php?error=invalidEmail");
 							} else {
 								
 							$passwordQuery = "SELECT password FROM users WHERE email='$email'";
@@ -132,7 +143,7 @@
 							$dbPassword = $row2['password'];
 							
 							if ($password != $dbPassword) {
-								header("Location: index.php?error=invalidPassword");
+								header("Location: artist_list.php?error=invalidPassword");
 							} else {
 							
 							//Quickly collect all other user data for use during their session
@@ -143,7 +154,7 @@
 							$_SESSION["id"] = $row3['id'];
 							$_SESSION["membership_type"] = $row3['membership_type'];
 							
-							header("Location: index.php");
+							header("Location: artist_list.php");
 							$dbh->null;
 							}
 							}

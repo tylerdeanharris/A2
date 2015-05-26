@@ -26,7 +26,6 @@
 						foreach($dbh->query($sqL) as $row){
 							echo "<option value=".$row['artist_id'].">".$row['artist_name']."</option>";
 						}
-						
                    	echo' </select>
                     <input type="submit" name="button"/>
                     </form>';
@@ -44,7 +43,7 @@
 							."<label>Email:</label>";
 								echo "<input type='text' name='email' value='$row[email]' />"
 							."<label>Genre:</label>";
-				?>			
+					?>			
 						<script type="text/javascript">
 						function select_options(music_genre){
 							if(music_genre=='Other')document.getElementById('hidden_div').innerHTML='Other: <input type="text" name="music_genre" />';
@@ -77,34 +76,36 @@
 						}
 							
 						if (isset($_POST['submit'])) {
+						//Only allow certain Images to be uploaded
+						if ((($_FILES["image"]["type"] == "image/gif")
+						|| ($_FILES["image"]["type"] == "image/jpeg")
+						|| ($_FILES["image"]["type"] == "image/png")
+						|| ($_FILES["image"]["type"] == "image/pjpeg"))
+						&& ($_FILES["image"]["size"] < 2000000)) {
+							
+						// check for any error code in the data.
+						if ($_FILES["image"]["error"] > 0) {
+							echo "Error Code: " . $_FILES["image"]["error"] . "<br />";
+							echo "<p><a href='artist.php'>Return to Artist sign up page</a></p>:";
+							
+						} else {	
 						$name = $_FILES["image"]["name"];
 	
 						$tmp_name = $_FILES['image']['tmp_name'];
 						$error = $_FILES['image']['error'];
-	
+						}
 						if (isset ($name)) {
 						if (!empty($name)) {
 	
-						$location =    dirname(__FILE__). '/artistPhotos/';
+						$location = dirname(__FILE__). '/artistPhotos/';
 						if  (move_uploaded_file($tmp_name, $location.$name)){
 						echo 'Uploaded';
 						}
-	
 						} else {
 						echo 'please choose a file';
 						}
 							}
-							
-								if(empty($name)){
-									$sql = "UPDATE artistInput SET artist_name = '$_REQUEST[artist_name]', artist_description = '$_REQUEST[artist_description]', email = '$_REQUEST[email]',  music_genre = '$_REQUEST[music_genre]' WHERE artist_id=$_POST[artist_id]";
-										if ($dbh->exec($sql)){
-											echo "$_REQUEST[artist_name] has been updated.";
-											//refresh page if when submit button has been selected.
-											header("Location: update_form.php");
-										}
-										
-									} else {
-											
+								if(!empty($name)){
 									$sql = "UPDATE artistInput SET artist_name = '$_REQUEST[artist_name]', artist_description = '$_REQUEST[artist_description]', email = '$_REQUEST[email]',  music_genre = '$_REQUEST[music_genre]', location='artistPhotos/$name' WHERE artist_id=$_POST[artist_id]";
 										if ($dbh->exec($sql)){
 											echo "$_REQUEST[artist_name] has been updated.";
@@ -112,8 +113,15 @@
 											header("Location: update_form.php");
 										}
 									}
-									
+									} else {
+									$sql = "UPDATE artistInput SET artist_name = '$_REQUEST[artist_name]', artist_description = '$_REQUEST[artist_description]', email = '$_REQUEST[email]',  music_genre = '$_REQUEST[music_genre]' WHERE artist_id=$_POST[artist_id]";
+										if ($dbh->exec($sql)){
+											echo "$_REQUEST[artist_name] has been updated.";
+											//refresh page if when submit button has been selected.
+											header("Location: update_form.php");
+								}
 							}
+						}
 					?>
                     </div>
                 </article>
@@ -122,96 +130,14 @@
             <aside>
                 <div class="side-box">
                 	<?php
-						//Display the login form
-						function displayLogin() {
-							
-							include("dbconnect.php");
-							
-							if (isset($_REQUEST['error'])) {
-								if ($_REQUEST['error'] == 'invalidEmail') {
-									echo "<p class='loginError'>Sorry, but that email address does not exist in our system.</p>";
-								}
-								if ($_REQUEST['error'] == 'invalidPassword') {
-									echo "<p class='loginError'>Sorry, but it appears that password was wrong.</p>";
-								}
-								if ($_REQUEST['error'] == 'noEmail') {
-									echo "<p class='loginError'>It helps to enter an email address.</p>";
-								}
-							}	
-							if (!$_SESSION['id']) {
-								echo "<table><form action='bulletin.php' method='post'><tr>"
-								."<h1>Login</h1>"
-								."<td>Email:</td><td><input type='text' name='email' size='30'></td></tr>"
-								."<tr><td>Password:</td><td><input type='password' name='password' size='30'></td></tr>"
-								."<tr><td><input type='submit' value='Login' name='login'></td></tr>"
-								."<tr><td><small>Not a member?<a href='register.php'>Signup now!</a></small></td></tr>"
-								."</form></table>";
-							} else {
-								$getUserInfo = "SELECT * FROM users WHERE id = $_SESSION[id]";
-								$result = $dbh->query($getUserInfo);
-								$row = $result->fetch(PDO::FETCH_LAZY);
-								if ($row['membership_type'] == 0) {
-									echo "<p>Welcome back, ".$row['first_name']."!</p><p>(<a href=#>Profile</a>)</p><p>(<a href=logout.php>Logout</a>)<p>";
-								} else {
-									echo "<p>Welcome back, ".$row['first_name']."!</p><p>(<a href=#>Profile</a>)</p><p>(<a href=#>Bulletin Board</a>)</p><p>(<a href=#>Artists</a>)</p><p>(<a href=logout.php>Logout</a>)<p>";
-								}
-							}
+						$getUserInfo = "SELECT * FROM users WHERE id = $_SESSION[id]";
+						$result = $dbh->query($getUserInfo);
+						$row = $result->fetch(PDO::FETCH_LAZY);
+						if ($row['membership_type'] == 0) {
+							echo "<p>Welcome back, ".$row['first_name']."!</p><p>(<a href=#>Profile</a>)</p><p>(<a href=logout.php>Logout</a>)</p>";
+						} else {
+							echo "<p>Welcome back, ".$row['first_name']."!</p><p>(<a href=#>Profile</a>)</p><p>(<a href=#>Bulletin Board</a>)</p><p>(<a href=#>Artists</a>)</p><p>(<a href=logout.php>Logout</a>)</p>";
 						}
-						
-						//This function will log the user in
-						function processLogin() {
-							
-							//Connect to the database
-							include("dbconnect.php");
-							
-							//Collect user provided information
-							$email = $_REQUEST['email'];
-							$password = md5($_REQUEST['password']);
-							
-							if (empty($email)) {
-								header("Location: index.php?error=noEmail");
-								exit;
-							}
-							
-							//Check if the user provided email is correct
-							$emailQuery = "SELECT email FROM users WHERE email='$email'";
-							$emailResult = $dbh->query($emailQuery);
-							$row = $emailResult->fetch(PDO::FETCH_LAZY);
-							$dbEmail = $row['email'];
-							   
-							if ($email != $dbEmail) {
-								header("Location: index.php?error=invalidEmail");
-							} else {
-								
-							$passwordQuery = "SELECT password FROM users WHERE email='$email'";
-							$passwordResult = $dbh->query($passwordQuery);
-							$row2 = $passwordResult->fetch(PDO::FETCH_LAZY);
-							$dbPassword = $row2['password'];
-							
-							if ($password != $dbPassword) {
-								header("Location: index.php?error=invalidPassword");
-							} else {
-							
-							//Quickly collect all other user data for use during their session
-							$userInformation = "SELECT * FROM users WHERE email='$email' AND password='$password'";
-							$userResult = $dbh->query($userInformation);
-							$row3 = $userResult->fetch(PDO::FETCH_LAZY);
-							
-							$_SESSION["id"] = $row3['id'];
-							$_SESSION["membership_type"] = $row3['membership_type'];
-							
-							header("Location: bulletin.php");
-							$dbh->null;
-							}
-							}
-						}
-							
-						if (isset($_POST['login'])) {
-						   processLogin();
-						}
-					
-						displayLogin();
-						
 					?>
                 </div>
             </aside>

@@ -26,6 +26,7 @@
 									$query = $dbh->query("SELECT first_name, last_name FROM users WHERE id='$row[created_by]'");
 									$result = $query->fetch(PDO::FETCH_ASSOC);
 									echo '<h1>' . $row["title"] . '</h1>';
+									echo "<div><img width='250px' height='200px' src='" . $row['location'] . "'></div>";
 									echo '<p>' . $row['body'] . '</p>';
 									echo '<small>Created By: ' . $result['first_name'] . ' ' . $result['last_name'] . '</small><br />';
 									echo '<small>Contact Details: ' . $row['contact_preference'] . '</small>';
@@ -66,8 +67,8 @@
 							if (!$_SESSION['id']) {
 								echo "<table><form action='bulletin.php' method='post'><tr>"
 								."<h1>Login</h1>"
-								."<td>Email:</td><td><input type='text' name='email' size='30'></td></tr>"
-								."<tr><td>Password:</td><td><input type='password' name='password' size='30'></td></tr>"
+								."<td>Email:</td><td><input type='text' name='email'></td></tr>"
+								."<tr><td>Password:</td><td><input type='password' name='password'></td></tr>"
 								."<tr><td><input type='submit' value='Login' name='login'></td></tr>"
 								."<tr><td><small>Not a member?<a href='register.php'>Signup now!</a></small></td></tr>"
 								."</form></table>";

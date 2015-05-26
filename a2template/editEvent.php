@@ -1,7 +1,7 @@
 <?php
 	session_start();
 	include("dbconnect.php");
-	if (!$_SESSION['id']) {
+	if (!$_SESSION['id'] || $_SESSION['membership_type'] != 2) {
 		header("Location: events.php");
 	}
 ?>
@@ -24,15 +24,15 @@
 										echo "<p class='loginError'>Please enter the name of the event.</p>";
 									} else if ($_REQUEST['error'] == 'noInformation') {
 										echo "<p class='loginError'>Please enter some content for the event.</p>";
-									} else if ($_REQUEST['error'] == 'noLocation') {
-										echo "<p class='loginError'>Please provide the event location.</p>";
+									} else if ($_REQUEST['error'] == 'noVenue') {
+										echo "<p class='loginError'>Please provide the event venue.</p>";
 									}
 								}
 								$query = $dbh->query("SELECT * FROM events WHERE id=" . $_REQUEST['id'] . "");
 								$result = $query->fetch(PDO::FETCH_ASSOC);
 								?>
                                     <table>
-                                        <form method="post" action="editEvent.php?id=<?php echo $_REQUEST['id']; ?>">
+                                        <form method="post" action="editEvent.php?id=<?php echo $_REQUEST['id']; ?>" enctype="multipart/form-data">
                                             <tr>
                                                 <h1>Edit an Event</h1>
                                                 <td>Title:</td>
@@ -43,8 +43,12 @@
                                                 <td><textarea name="information" rows="10" cols="40"><?php echo $result['information']; ?></textarea></td>
                                             </tr>
                                             <tr>
-                                                <td>Location:</td>
-                                                <td><input name="location" size="43" value="<?php echo $result['location']; ?>" /></td>
+                                            	<td>Select Image:</td>
+                            					<td><input type="file" name="image" id="image" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Venue:</td>
+                                                <td><input name="venue" size="43" value="<?php echo $result['venue']; ?>" /></td>
                                             </tr>
                                             <tr>
                                                 <td></td>
@@ -67,24 +71,49 @@
 									header("Location: editEvent.php?error=noInformation");
 									exit();
 								}
-								if(empty($_POST['location'])) {
-									header("Location: editEvent.php?error=noLocation");
+								if(empty($_POST['venue'])) {
+									header("Location: editEvent.php?error=noVenue");
 									exit();
 								}
 								
 								$title = $_POST['title'];
 								$information = $_POST['information'];
-								$location = $_POST['location'];
+								$venue = $_POST['venue'];
 								
-								//If everything above has passed, update any changes
-								$editEvent = "UPDATE events SET title = '$title', information = '$information', location = '$location' WHERE id='$_REQUEST[id]'";
-								if ($dbh->exec($editEvent)) {
-									echo 'Updated successfully...';
-									echo '<br /><a href="events.php">Back to Events</a>';
-								} else {
-									echo "Sorry, but it appears something went wrong...";
+								$name = $_FILES["image"]["name"];
+								$tmp_name = $_FILES['image']['tmp_name'];
+								$error = $_FILES['image']['error'];
+			
+								if (isset ($name)) {
+								if (!empty($name)) {
+			
+								$location = dirname(__FILE__). '/eventPhotos/';
+								if  (move_uploaded_file($tmp_name, $location.$name)){
+									echo 'Congrats, image uploaded';
 								}
-								
+			
+								} else {
+									echo 'Error';
+								}
+									}
+									
+										if(empty($name)){
+											$sql = "UPDATE events SET title = '$title', information = '$information', venue = '$venue' WHERE id='$_REQUEST[id]'";
+												if ($dbh->exec($sql)){
+													echo "Updated.";
+													//refresh page if when submit button has been selected.
+													header("Location: events.php");
+												}
+												
+											} else {
+													
+											$sql = "UPDATE events SET title = '$title', information = '$information', venue = '$venue', location='eventPhotos/$name' WHERE id='$_REQUEST[id]'";
+												if ($dbh->exec($sql)){
+													echo "Updated.";
+													//refresh page if when submit button has been selected.
+													header("Location: events.php");
+												}
+											}
 							}
 							
 							if (isset($_POST['editEvent'])) {

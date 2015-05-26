@@ -1,7 +1,7 @@
 <?php
 	session_start();
 	include("dbconnect.php");
-	if (!$_SESSION['id']) {
+	if (!$_SESSION['id'] || $_SESSION['membership_type'] != 2) {
 		header("Location: events.php");
 	}
 ?>
@@ -23,13 +23,13 @@
 										echo "<p class='loginError'>Please enter the name of the event.</p>";
 									} else if ($_REQUEST['error'] == 'noInformation') {
 										echo "<p class='loginError'>Please enter some content for the event.</p>";
-									} else if ($_REQUEST['error'] == 'noLocation') {
-										echo "<p class='loginError'>Please provide the event location.</p>";
+									} else if ($_REQUEST['error'] == 'noVenue') {
+										echo "<p class='loginError'>Please provide the event venue.</p>";
 									}
 								}
 						?>
                         <table>
-                            <form method="post" action="addEvent.php">
+                            <form method="post" action="addEvent.php" enctype="multipart/form-data">
                                 <tr>
                                     <h1>Add New Event</h1>
                                     <td>Title:</td>
@@ -40,8 +40,12 @@
                                     <td><textarea name="information" rows="10" cols="40"></textarea></td>
                                 </tr>
                                 <tr>
-                                    <td>Location:</td>
-                                    <td><input name="location" size="43"/></td>
+                                    <td>Select Image:</td>
+                                    <td><input type="file" name="image" id="image" /></td>
+                                </tr>
+                                <tr>
+                                    <td>Venue:</td>
+                                    <td><input name="venue" size="43"/></td>
                                 </tr>
                                 <tr>
                                     <td></td>
@@ -63,27 +67,65 @@
 								header("Location: addEvent.php?error=noInformation");
 								exit();
 							}
-							if(empty($_POST['location'])) {
-								header("Location: addEvent.php?error=noLocation");
+							if(empty($_POST['venue'])) {
+								header("Location: addEvent.php?error=noVenue");
 								exit();
 							}
 							
 							$title = $_POST['title'];
 							$information = $_POST['information'];
-							$location = $_POST['location'];
+							$venue = $_POST['venue'];
 							$date_created = date("d.m.y");
 							$expire = new DateTime($date_created);
 							$expire->modify('+30 day');
 							$expire = $expire->format('d-m-Y');
 							
-							//If everything above has passed, create the post
-							$insertEvent = "INSERT INTO events (title,information,location,date_created,date_expires,created_by) VALUES ('$title','$information','$location','$date_created','$expire','$_SESSION[id]')";
-							if ($dbh->exec($insertEvent)) {
-								header("Location: events.php");
+							//Only allow certain Images to be uploaded
+							if ((($_FILES["image"]["type"] == "image/gif")
+							|| ($_FILES["image"]["type"] == "image/jpeg")
+							|| ($_FILES["image"]["type"] == "image/png")
+							|| ($_FILES["image"]["type"] == "image/pjpeg"))
+							&& ($_FILES["image"]["size"] < 2000000)) {
+								
+								// check for any error code in the data.
+								if ($_FILES["image"]["error"] > 0) {
+									echo "Error Code: " . $_FILES["image"]["error"] . "<br />";
+									echo "<p><a href='addEvent.php'>Return to add event page</a></p>:";
+								} else {	
+									//store img on server .
+									$file = $_FILES['image']['tmp_name'];
+									//Checking if photo has alread been stored. 
+									if (file_exists("eventPhotos/" . $_FILES["image"]["name"])){
+										echo $_FILES["image"]["name"] . " already exists. \n";
+									} else {						
+										$image = addslashes(file_get_contents($_FILES['image']['tmp_name']));
+										$image_name = addslashes($_FILES['image']['name']);						
+										move_uploaded_file($_FILES["image"]["tmp_name"],"eventPhotos/" . $_FILES["image"]["name"]);
+										$location="eventPhotos/" . $_FILES["image"]["name"];
+										$sql = "INSERT INTO events (title, information, venue, date_created, date_expires, created_by, location) VALUES ('$title', '$information','$venue','$date_created','$expire','$_SESSION[id]','$location')";
+											if ($dbh->exec($sql)) {
+												//echo "<strong>Inserted $_REQUEST[artist_name]</strong>";
+												header("Location: events.php");
+											} else {
+													echo "Not inserted"; // in case it didn't work - e.g. if database is not writeable 
+											}
+										}
+									} 
+							//if no imgae has been inserted, assign the artist a default image.		
 							} else {
-								echo "Sorry, but it appears something went wrong...";
+								if(empty($_FILES['image']['name']))	{
+									$sql = "INSERT INTO events (title, information, venue, date_created, date_expires, created_by, location) VALUES ('$title', '$information','venue','$date_created','$date_expires','$_SESSION[id]','eventPhotos/default.jpg')";
+										if ($dbh->exec($sql)){
+											//echo "<strong>Inserted $_REQUEST[artist_name]</strong>";
+											header("Location: events.php");
+										} else {
+											echo "Not inserted"; // in case it didn't work - e.g. if database is not writeable 
+										}
+								//display error message if invalid image has been submitted	
+								} else {
+									echo "You have entered an invalid Image type. Please enter the following imgae formats: gif, jpeg, png, pjpeg";
+								}
 							}
-							
 						}
 							
 						if (isset($_POST['addEvent'])) {
@@ -118,8 +160,8 @@
                         if (!$_SESSION['id']) {
                             echo "<table><form action='events.php' method='post'><tr>"
                             ."<h1>Login</h1>"
-                            ."<td>Email:</td><td><input type='text' name='email' size='30'></td></tr>"
-                            ."<tr><td>Password:</td><td><input type='password' name='password' size='30'></td></tr>"
+                            ."<td>Email:</td><td><input type='text' name='email'></td></tr>"
+                            ."<tr><td>Password:</td><td><input type='password' name='password'></td></tr>"
                             ."<tr><td><input type='submit' value='Login' name='login'></td></tr>"
                             ."<tr><td><small>Not a member?<a href='register.php'>Signup now!</a></small></td></tr>"
                             ."</form></table>";

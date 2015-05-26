@@ -1,7 +1,7 @@
 <?php
 	session_start();
 	include("dbconnect.php");
-	if(!isset($_SESSION['id'])) {
+	if(!isset($_SESSION['id']) || $_SESSION['membership_type'] != 2) {
 		header("Location: events.php");
 	}
 	
