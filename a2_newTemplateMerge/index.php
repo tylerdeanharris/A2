@@ -6,6 +6,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<?php include("inc/header.php"); ?>
     <title>Home - Townsville Community Music Centre</title>
+    <meta name="keywords" content="Music-Townsville, Townsville music events, tcmc">
+  	<meta name="description" content="Townsville Community Music Center.">
 	<body>
     	<div id="main-wrapper">
             <?php include("inc/navigation.php"); ?>
