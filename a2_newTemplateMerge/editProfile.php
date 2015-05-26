@@ -145,7 +145,6 @@
 					?>
                 </div>
             </aside>
-            <?php include("inc/footer.php"); ?>
             </div>
           </aside>
           <div class="sidebox_sponsor">

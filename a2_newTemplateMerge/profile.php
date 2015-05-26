@@ -8,13 +8,12 @@
 	$result = $dbh->query($getUserInfo);
 	$row = $result->fetch(PDO::FETCH_LAZY);
 ?>
-?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<?php include("inc/header.php"); ?>
     <title><?php echo "" . $row['first_name'] . "'s Profile"; ?> - Townsville Community Music Centre</title>
 	<body>
-          <section id="main-content">
+          <div id="main-section">
           	<?php include("inc/navigation.php"); ?>
             <section id="main-content">
                 <article>
@@ -80,9 +79,6 @@
 					?>
                 </div>
             </aside>
-            <?php include("inc/footer.php"); ?>
-            </div>
-          </aside>
           <div class="sidebox_sponsor">
           <h1 id="sponsortitle">
           	A special thanks to our sponsors 
